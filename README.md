@@ -1,1 +1,51 @@
 # R-project
+# Function to create a special "matrix" object that can cache its inverse
+makeCacheMatrix <- function(x = matrix()) {
+  # Initialize inverse matrix
+  i <- NULL
+  
+  # Set the matrix
+  set <- function(matrix) {
+    x <<- matrix
+    i <<- NULL
+  }
+  
+  # Get the matrix
+  get <- function() x
+  
+  # Set the inverse of the matrix
+  setInverse <- function(inverse) {
+    i <<- inverse
+  }
+  
+  # Get the inverse of the matrix
+  getInverse <- function() i
+  
+  # Return a list of functions
+  list(set = set,
+       get = get,
+       setInverse = setInverse,
+       getInverse = getInverse)
+}
+
+# Function to compute the inverse of the special "matrix" object
+cacheSolve <- function(x, ...) {
+  # Get the cached inverse
+  inverse <- x$getInverse()
+  
+  # If the cached inverse exists, return it
+  if(!is.null(inverse)) {
+    message("getting cached inverse")
+    return(inverse)
+  }
+  
+  # If the cached inverse does not exist, compute it
+  data <- x$get()
+  inverse <- solve(data, ...)
+  
+  # Cache the computed inverse
+  x$setInverse(inverse)
+  
+  # Return the computed inverse
+  inverse
+}
